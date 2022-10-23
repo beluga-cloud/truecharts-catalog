@@ -48,4 +48,4 @@ jobs:
           add: ${{ inputs.train }}
           committer_name: GitHub Actions
           committer_email: 41898282+github-actions[bot]@users.noreply.github.com
-          message: Sync belug-apps ${{ steps.helm.outputs.version }}
+          message: sync belug-apps ${{ steps.helm.outputs.version }}

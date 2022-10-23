@@ -46,4 +46,4 @@ jobs:
           add: ${{ inputs.train }}
           committer_name: GitHub Actions
           committer_email: 41898282+github-actions[bot]@users.noreply.github.com
-          message: Sync TrueChart ${{ inputs.train }}/${{ inputs.app }}
+          message: sync TrueChart ${{ inputs.train }}/${{ inputs.app }}
