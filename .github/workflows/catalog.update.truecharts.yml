@@ -62,7 +62,7 @@ jobs:
           delete-branch: true
           signoff: true
           title: Sync catalog with TrueCharts one (${{ inputs.train }}/${{ inputs.app }})
-      - uses: peter-evans/enable-pull-request-automerge@127dd0d855f673047637945655ee76f0e9f239fe
+      - uses: peter-evans/enable-pull-request-automerge@b3d5f7fa98684271559de54e61405dca9bb5c328
         if: steps.create-pr.outputs.pull-request-operation == 'created'
         with:
           merge-method: squash
