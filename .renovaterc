@@ -1,0 +1,19 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    ":automergeMinor",
+    ":automergePr",
+    ":enableVulnerabilityAlerts",
+    ":gitSignOff",
+    ":ignoreUnstable",
+    ":maintainLockFilesMonthly",
+    ":renovatePrefix",
+    ":combinePatchMinorReleases",
+    ":separateMultipleMajorReleases"
+  ],
+  "ignorePaths": [
+    "incubator/**",
+    "stable/**"
+  ]
+}
