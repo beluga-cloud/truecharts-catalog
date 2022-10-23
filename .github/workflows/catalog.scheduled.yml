@@ -1,0 +1,24 @@
+---
+name: '[Scheduled] Catalog (Sync everything)'
+on: # yamllint disable-line rule:truthy
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 0 * * *'
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  sync_belugapps:
+    uses: ./.github/workflows/catalog.update.belug-apps.yml
+    secrets: inherit
+    with:
+      train: incubator
+      branch: main
+  sync_traefik:
+    uses: ./.github/workflows/catalog.update.truecharts.yml
+    secrets: inherit
+    with:
+      train: stable
+      app: traefik
