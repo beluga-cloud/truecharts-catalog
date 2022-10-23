@@ -60,7 +60,7 @@ jobs:
           committer: Belug Apps <116495032+belug-apps[bot]@users.noreply.github.com>
           base: main
           body: ''
-          branch: catalog/sync-${{ inputs.train }}-${{ inputs.app }}
+          branch: catalog/sync-${{ inputs.train }}-${{ inputs.branch }}
           delete-branch: true
           signoff: true
           title: Sync catalog (${{ inputs.train }}) with belug-apps chart (${{ steps.helm.outputs.version }})
