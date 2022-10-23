@@ -1,0 +1,13 @@
+---
+name: Catalog (Update belug-apps chart)
+on: # yamllint disable-line rule:truthy
+  repository_dispatch:
+    types: [sync-belugapps]
+
+jobs:
+  on_repository_dispatch:
+    uses: ./.github/workflows/catalog.update.belug-apps.yml
+    if: ${{ github.event.client_payload.branch != '' }}
+    with:
+      branch: ${{ github.event.client_payload.branch }}
+      train: incubator
