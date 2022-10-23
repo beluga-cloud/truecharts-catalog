@@ -1,0 +1,17 @@
+---
+name: '[Scheduled] Catalog (Update TrueNAS charts)'
+on: # yamllint disable-line rule:truthy
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  on_schedule:
+    strategy:
+      matrix:
+        train: [incubator, stable]
+        app: [traefik]
+    uses: ./.github/workflows/catalog.update.truecharts.yml
+    with:
+      train: ${{ matrix.train }}
+      app: ${{ matrix.app }}
