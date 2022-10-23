@@ -49,7 +49,8 @@ jobs:
         run: |
           mkdir --parent ${{ inputs.train }}/${{ inputs.app }}
           rsync --archive --recursive --delete --verbose vendors/truecharts/${{ inputs.train }}/${{ inputs.app }}/ ${{ inputs.train }}/${{ inputs.app }}
-          rm --recursive --force vendors/ "$(find ${{ inputs.train }}/${{ inputs.app }}/ -maxdepth 1 -mindepth 1 -type d | sort -rV | tail -n+6)"
+          # shellcheck disable=SC2046
+          rm --recursive --force vendors/ $(find ${{ inputs.train }}/${{ inputs.app }}/ -maxdepth 1 -mindepth 1 -type d | sort -rV | tail -n+6 | xargs)
       - uses: peter-evans/create-pull-request@b4d51739f96fca8047ad065eccef63442d8e99f7 # tag=v4.2.0
         id: create-pr
         with:
