@@ -36,10 +36,10 @@ jobs:
         with:
           app_id: ${{ secrets.BOT_ID }}
           private_key: ${{ secrets.BOT_PKEY }}
-      - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
+      - uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
         with:
           ref: main
-      - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
+      - uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
         with:
           repository: belug-apps/belug-apps
           ref: ${{ inputs.branch }}
