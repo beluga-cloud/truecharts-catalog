@@ -6,12 +6,8 @@ on: # yamllint disable-line rule:truthy
     - cron: '0 0 * * *'
 
 jobs:
-  on_schedule:
-    strategy:
-      matrix:
-        train: [incubator, stable]
-        app: [traefik]
+  sync_traefik:
     uses: ./.github/workflows/catalog.update.truecharts.yml
     with:
-      train: ${{ matrix.train }}
-      app: ${{ matrix.app }}
+      train: stable
+      app: traefik
