@@ -32,15 +32,15 @@ jobs:
       pull-requests: write
       contents: write
     steps:
-      - uses: tibdex/github-app-token@da40f50387c080df631aba01ea5c6df3857145b7
+      - uses: tibdex/github-app-token@021a2405c7f990db57f5eae5397423dcc554159c # tag=1.7.0
         id: app_auth
         with:
           app_id: ${{ secrets.BOT_ID }}
           private_key: ${{ secrets.BOT_PKEY }}
-      - uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
+      - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791 # tag=v2.5.0
         with:
           ref: main
-      - uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
+      - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791 # tag=v2.5.0
         with:
           repository: truecharts/catalog
           ref: main
@@ -50,7 +50,7 @@ jobs:
           mkdir --parent ${{ inputs.train }}/${{ inputs.app }}
           rsync --archive --recursive --delete --verbose vendors/truecharts/${{ inputs.train }}/${{ inputs.app }}/ ${{ inputs.train }}/${{ inputs.app }}
           rm --recursive --force vendors/ "$(find ${{ inputs.train }}/${{ inputs.app }}/ -maxdepth 1 -mindepth 1 -type d | sort -rV | tail -n+6)"
-      - uses: peter-evans/create-pull-request@88bf0de51c7487d91e1abbb4899332e602c58bbf
+      - uses: peter-evans/create-pull-request@b4d51739f96fca8047ad065eccef63442d8e99f7 # tag=v4.2.0
         id: create-pr
         with:
           commit-message: sync TrueChart ${{ inputs.train }}/${{ inputs.app }}
@@ -62,13 +62,13 @@ jobs:
           delete-branch: true
           signoff: true
           title: Sync catalog with TrueCharts one (${{ inputs.train }}/${{ inputs.app }})
-      - uses: peter-evans/enable-pull-request-automerge@b3d5f7fa98684271559de54e61405dca9bb5c328
+      - uses: peter-evans/enable-pull-request-automerge@127dd0d855f673047637945655ee76f0e9f239fe # tag=v2.2.1
         if: steps.create-pr.outputs.pull-request-operation == 'created'
         with:
           merge-method: squash
           pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
           token: ${{ steps.app_auth.outputs.token }}
-      - uses: hmarr/auto-approve-action@da92209ac68d76fd20af3efa5268a5e8fafb91d9
+      - uses: hmarr/auto-approve-action@de8ae18c173c131e182d4adf2c874d8d2308a85b # tag=v3.1.0
         if: steps.create-pr.outputs.pull-request-operation == 'created'
         with:
           pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
