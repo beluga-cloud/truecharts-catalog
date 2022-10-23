@@ -38,7 +38,7 @@ jobs:
           ref: master
           path: vendor/truecharts
       - name: Sync TrueChart ${{ inputs.train }}/${{ inputs.app }}
-        run: rsync --archive --recursive --delete --verbose vendor/truecharts/charts/${{ inputs.train }}/${{ inputs.app }}/ ${{ inputs.train }}/${{ inputs.app }}
+        run: rsync --archive --recursive --delete --relative --verbose vendor/truecharts/charts/${{ inputs.train }}/${{ inputs.app }}/ ${{ inputs.train }}/${{ inputs.app }}
       - uses: EndBug/add-and-commit@61a88be553afe4206585b31aa72387c64295d08b
         with:
           add: ${{ inputs.train }}

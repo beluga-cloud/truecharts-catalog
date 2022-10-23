@@ -40,7 +40,7 @@ jobs:
         id: helm
         run: echo >> "$GITHUB_OUTPUT" "version=$(grep '^version:' vendor/belug-apps/charts/belug-apps/Chart.yaml | awk '{print $2}')"
       - name: Sync latest belug-apps version (${{ steps.helm.outputs.version }})
-        run: rsync --archive --recursive --delete --verbose vendor/belug-apps/charts/belug-apps/ ${{ inputs.train }}/belug-apps/${{ steps.helm.outputs.version }}
+        run: rsync --archive --recursive --delete --relative --verbose vendor/belug-apps/charts/belug-apps/ ${{ inputs.train }}/belug-apps/${{ steps.helm.outputs.version }}
       - uses: EndBug/add-and-commit@61a88be553afe4206585b31aa72387c64295d08b
         with:
           add: ${{ inputs.train }}
