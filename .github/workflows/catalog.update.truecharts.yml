@@ -34,13 +34,13 @@ jobs:
           ref: main
       - uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
         with:
-          repository:  truecharts/charts
-          ref: master
+          repository:  truecharts/catalog
+          ref: main
           path: vendor/truecharts
       - name: Sync TrueChart ${{ inputs.train }}/${{ inputs.app }}
         run: |
           mkdir --parent ${{ inputs.train }}/${{ inputs.app }}
-          rsync --archive --recursive --delete --verbose vendor/truecharts/charts/${{ inputs.train }}/${{ inputs.app }}/ ${{ inputs.train }}/${{ inputs.app }}
+          rsync --archive --recursive --delete --verbose vendor/truecharts/${{ inputs.train }}/${{ inputs.app }}/ ${{ inputs.train }}/${{ inputs.app }}
       - uses: EndBug/add-and-commit@61a88be553afe4206585b31aa72387c64295d08b
         with:
           add: ${{ inputs.train }}
