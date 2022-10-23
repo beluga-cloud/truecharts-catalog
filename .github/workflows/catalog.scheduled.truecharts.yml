@@ -8,6 +8,7 @@ on: # yamllint disable-line rule:truthy
 jobs:
   sync_traefik:
     uses: ./.github/workflows/catalog.update.truecharts.yml
+    secrets: inherit
     with:
       train: stable
       app: traefik
