@@ -1,7 +1,7 @@
 image:
   repository: tccr.io/truecharts/traefik
   # defaults to appVersion
-  tag: 2.9.1@sha256:e8e6da4e8c59b7bbec5a163cd608e8e62775789580e47921cc6e7fc6d33b037d
+  tag: 2.9.4@sha256:7c5f07ef67ec092b66dd8bdb56279ed876965553ee5ec59b5aa7456def5ed1f3
   pullPolicy: IfNotPresent
 
 updateCRD: true
