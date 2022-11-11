@@ -1,10 +1,8 @@
 groups:
   - name: Container Image
     description: Image to be used for container
-  - name: Controller
-    description: Configure Workload Deployment
-  - name: Container Configuration
-    description: Additional Container Configuration
+  - name: General Settings
+    description: General Deployment Settings
   - name: App Configuration
     description: App Specific Config Options
   - name: Networking and Services
@@ -21,6 +19,8 @@ groups:
     description: Traefik Middlewares
   - name: Metrics
     description: Metrics
+  - name: VPN
+    description: VPN
   - name: Addons
     description: Addon Configuration
   - name: Advanced
@@ -39,7 +39,7 @@ portals:
 questions:
   - variable: global
     label: Global Settings
-    group: Controller
+    group: "General Settings"
     schema:
       type: dict
       hidden: true
@@ -51,103 +51,25 @@ questions:
             default: true
             hidden: true
   - variable: controller
-    group: Controller
+    group: "General Settings"
     label: ""
     schema:
       additional_attrs: true
       type: dict
       attrs:
-        - variable: advanced
-          label: Show Advanced Controller Settings
+
+        - variable: replicas
+          description: Number of desired pod replicas
+          label: Desired Replicas
           schema:
-            type: boolean
-            default: false
-            show_subquestions_if: true
-            subquestions:
-              - variable: type
-                description: Please specify type of workload to deploy
-                label: (Advanced) Controller Type
-                schema:
-                  type: string
-                  required: true
-                  enum:
-                    - value: deployment
-                      description: Deployment
-                    - value: statefulset
-                      description: Statefulset
-                    - value: daemonset
-                      description: Daemonset
-                  default: deployment
-              - variable: replicas
-                description: Number of desired pod replicas
-                label: Desired Replicas
-                schema:
-                  type: int
-                  required: true
-                  default: 1
-              - variable: strategy
-                description: Please specify type of workload to deploy
-                label: (Advanced) Update Strategy
-                schema:
-                  type: string
-                  required: true
-                  enum:
-                    - value: Recreate
-                      description: "Recreate: Kill existing pods before creating new ones"
-                    - value: RollingUpdate
-                      description: "RollingUpdate: Create new pods and then kill old ones"
-                    - value: OnDelete
-                      description: "(Legacy) OnDelete: ignore .spec.template changes"
-                  default: Recreate
-        - variable: expert
-          label: Show Expert Configuration Options
-          schema:
-            type: boolean
-            default: false
-            show_subquestions_if: true
-            subquestions:
-              - variable: labelsList
-                label: Controller Labels
-                schema:
-                  type: list
-                  default: []
-                  items:
-                    - variable: labelItem
-                      label: Label
-                      schema:
-                        additional_attrs: true
-                        type: dict
-                        attrs:
-                          - variable: name
-                            label: Name
-                            schema:
-                              type: string
-                          - variable: value
-                            label: Value
-                            schema:
-                              type: string
-              - variable: annotationsList
-                label: Controller Annotations
-                schema:
-                  type: list
-                  default: []
-                  items:
-                    - variable: annotationItem
-                      label: Label
-                      schema:
-                        additional_attrs: true
-                        type: dict
-                        attrs:
-                          - variable: name
-                            label: Name
-                            schema:
-                              type: string
-                          - variable: value
-                            label: Value
-                            schema:
-                              type: string
+            type: int
+            required: true
+            default: 1
+
+
+
   - variable: customextraargs
-    group: Controller
+    group: "General Settings"
     label: "Extra Args"
     description: "Do not click this unless you know what you are doing"
     schema:
@@ -167,7 +89,7 @@ questions:
                   type: string
   - variable: TZ
     label: Timezone
-    group: Container Configuration
+    group: "General Settings"
     schema:
       type: string
       default: "Etc/UTC"
@@ -176,7 +98,7 @@ questions:
   - variable: envList
     label: Extra Environment Variables
     description: "Please be aware that some variables are set in the background, adding duplicates here might cause issues or prevent the app from starting..."
-    group: Container Configuration
+    group: "General Settings"
     schema:
       type: list
       default: []
@@ -195,82 +117,6 @@ questions:
                 label: Value
                 schema:
                   type: string
-  - variable: expertpodconf
-    group: Container Configuration
-    label: Show Expert Configuration
-    schema:
-      type: boolean
-      default: false
-      show_subquestions_if: true
-      subquestions:
-        - variable: tty
-          label: Enable TTY
-          description: Determines whether containers in a pod runs with TTY enabled. By default pod has it disabled.
-          group: Workload Details
-          schema:
-            type: boolean
-            default: false
-        - variable: stdin
-          label: Enable STDIN
-          description: Determines whether containers in a pod runs with stdin enabled. By default pod has it disabled.
-          group: Workload Details
-          schema:
-            type: boolean
-            default: false
-        - variable: termination
-          group: Container Configuration
-          label: Termination settings
-          schema:
-            additional_attrs: true
-            type: dict
-            attrs:
-              - variable: gracePeriodSeconds
-                label: Grace Period Seconds
-                schema:
-                  type: int
-                  default: 10
-        - variable: podLabelsList
-          group: Container Configuration
-          label: Pod Labels
-          schema:
-            type: list
-            default: []
-            items:
-              - variable: podLabelItem
-                label: Label
-                schema:
-                  additional_attrs: true
-                  type: dict
-                  attrs:
-                    - variable: name
-                      label: Name
-                      schema:
-                        type: string
-                    - variable: value
-                      label: Value
-                      schema:
-                        type: string
-        - variable: podAnnotationsList
-          group: Container Configuration
-          label: Pod Annotations
-          schema:
-            type: list
-            default: []
-            items:
-              - variable: podAnnotationItem
-                label: Label
-                schema:
-                  additional_attrs: true
-                  type: dict
-                  attrs:
-                    - variable: name
-                      label: Name
-                      schema:
-                        type: string
-                    - variable: value
-                      label: Value
-                      schema:
-                        type: string
   - variable: ingressClass
     label: "ingressClass"
     group: "App Configuration"
@@ -905,6 +751,7 @@ questions:
                 schema:
                   type: boolean
                   default: false
+                  hidden: true
                   show_subquestions_if: true
                   subquestions:
                     - variable: externalIPs
@@ -912,6 +759,7 @@ questions:
                       description: "External IP's"
                       schema:
                         type: list
+                        hidden: true
                         default: []
                         items:
                           - variable: externalIP
@@ -924,6 +772,7 @@ questions:
                       schema:
                         type: string
                         default: SingleStack
+                        hidden: true
                         enum:
                           - value: SingleStack
                             description: SingleStack
@@ -937,6 +786,7 @@ questions:
                       schema:
                         type: list
                         default: []
+                        hidden: true
                         items:
                           - variable: ipFamily
                             label: IP Family
@@ -1038,6 +888,7 @@ questions:
                 schema:
                   type: boolean
                   default: false
+                  hidden: true
                   show_subquestions_if: true
                   subquestions:
                     - variable: externalIPs
@@ -1045,6 +896,7 @@ questions:
                       description: "External IP's"
                       schema:
                         type: list
+                        hidden: true
                         default: []
                         items:
                           - variable: externalIP
@@ -1057,6 +909,7 @@ questions:
                       schema:
                         type: string
                         default: SingleStack
+                        hidden: true
                         enum:
                           - value: SingleStack
                             description: SingleStack
@@ -1070,6 +923,7 @@ questions:
                       schema:
                         type: list
                         default: []
+                        hidden: true
                         items:
                           - variable: ipFamily
                             label: IP Family
@@ -1218,40 +1072,20 @@ questions:
                               type: int
                               default: 9443
                               required: true
-                          - variable: advanced
-                            label: Show Advanced Settings
+                          - variable: protocol
+                            label: Port Type
                             schema:
-                              type: boolean
-                              default: false
-                              show_subquestions_if: true
-                              subquestions:
-                                - variable: enabled
-                                  label: Enable the Port
-                                  schema:
-                                    type: boolean
-                                    hidden: true
-                                    default: true
-                                - variable: protocol
-                                  label: Port Type
-                                  schema:
-                                    type: string
-                                    default: HTTPS
-                                    enum:
-                                      - value: HTTP
-                                        description: HTTP
-                                      - value: HTTPS
-                                        description: HTTPS
-                                      - value: TCP
-                                        description: TCP
-                                      - value: UDP
-                                        description: UDP
-                                - variable: nodePort
-                                  label: Node Port (Optional)
-                                  description: This port gets exposed to the node. Only considered when service type is NodePort, Simple or LoadBalancer
-                                  schema:
-                                    type: int
-                                    min: 9000
-                                    max: 65535
+                              type: string
+                              default: HTTPS
+                              enum:
+                                - value: HTTP
+                                  description: HTTP
+                                - value: HTTPS
+                                  description: HTTPS
+                                - value: TCP
+                                  description: TCP
+                                - value: UDP
+                                  description: UDP
                                 - variable: targetPort
                                   label: "Target Port"
                                   description: "The internal(!) port on the container the Application runs on"
@@ -1566,6 +1400,11 @@ questions:
                         type: string
                         default: websecure
                         required: true
+                    - variable: ingressClassName
+                      label: (Advanced/Optional) IngressClass Name
+                      schema:
+                        type: string
+                        default: ""
                     - variable: middlewares
                       label: Traefik Middlewares
                       description: Add previously created Traefik Middlewares to this Ingress
@@ -1579,240 +1418,8 @@ questions:
                               type: string
                               default: ""
                               required: true
-              - variable: expert
-                label: Show Expert Configuration Options
-                schema:
-                  type: boolean
-                  default: false
-                  show_subquestions_if: true
-                  subquestions:
-                    - variable: enableFixedMiddlewares
-                      description: These middlewares enforce a number of best practices.
-                      label: Enable Default Middlewares
-                      schema:
-                        type: boolean
-                        default: true
-                    - variable: ingressClassName
-                      label: IngressClass Name
-                      schema:
-                        type: string
-                        default: ""
-                    - variable: labelsList
-                      label: Labels
-                      schema:
-                        type: list
-                        default: []
-                        items:
-                          - variable: labelItem
-                            label: Label
-                            schema:
-                              additional_attrs: true
-                              type: dict
-                              attrs:
-                                - variable: name
-                                  label: Name
-                                  schema:
-                                    type: string
-                                - variable: value
-                                  label: Value
-                                  schema:
-                                    type: string
-                    - variable: annotationsList
-                      label: Annotations
-                      schema:
-                        type: list
-                        default: []
-                        items:
-                          - variable: annotationItem
-                            label: Label
-                            schema:
-                              additional_attrs: true
-                              type: dict
-                              attrs:
-                                - variable: name
-                                  label: Name
-                                  schema:
-                                    type: string
-                                - variable: value
-                                  label: Value
-                                  schema:
-                                    type: string
-  - variable: ingressList
-    label: Add Manual Custom Ingresses
-    group: Ingress
-    schema:
-      type: list
-      default: []
-      items:
-        - variable: ingressListEntry
-          label: Custom Ingress
-          schema:
-            additional_attrs: true
-            type: dict
-            attrs:
-              - variable: enabled
-                label: Enable Ingress
-                schema:
-                  type: boolean
-                  default: true
-                  hidden: true
-              - variable: name
-                label: Name
-                schema:
-                  type: string
-                  default: ""
-              - variable: ingressClassName
-                label: IngressClass Name
-                schema:
-                  type: string
-                  default: ""
-              - variable: labelsList
-                label: Labels
-                schema:
-                  type: list
-                  default: []
-                  items:
-                    - variable: labelItem
-                      label: Label
-                      schema:
-                        additional_attrs: true
-                        type: dict
-                        attrs:
-                          - variable: name
-                            label: Name
-                            schema:
-                              type: string
-                          - variable: value
-                            label: Value
-                            schema:
-                              type: string
-              - variable: annotationsList
-                label: Annotations
-                schema:
-                  type: list
-                  default: []
-                  items:
-                    - variable: annotationItem
-                      label: Label
-                      schema:
-                        additional_attrs: true
-                        type: dict
-                        attrs:
-                          - variable: name
-                            label: Name
-                            schema:
-                              type: string
-                          - variable: value
-                            label: Value
-                            schema:
-                              type: string
-              - variable: hosts
-                label: Hosts
-                schema:
-                  type: list
-                  default: []
-                  items:
-                    - variable: hostEntry
-                      label: Host
-                      schema:
-                        additional_attrs: true
-                        type: dict
-                        attrs:
-                          - variable: host
-                            label: HostName
-                            schema:
-                              type: string
-                              default: ""
-                              required: true
-                          - variable: paths
-                            label: Paths
-                            schema:
-                              type: list
-                              default: []
-                              items:
-                                - variable: pathEntry
-                                  label: Host
-                                  schema:
-                                    additional_attrs: true
-                                    type: dict
-                                    attrs:
-                                      - variable: path
-                                        label: Path
-                                        schema:
-                                          type: string
-                                          required: true
-                                          default: "/"
-                                      - variable: pathType
-                                        label: Path Type
-                                        schema:
-                                          type: string
-                                          required: true
-                                          default: Prefix
-                                      - variable: service
-                                        label: Linked Service
-                                        schema:
-                                          additional_attrs: true
-                                          type: dict
-                                          attrs:
-                                            - variable: name
-                                              label: Service Name
-                                              schema:
-                                                type: string
-                                                default: ""
-                                            - variable: port
-                                              label: Service Port
-                                              schema:
-                                                type: int
-              - variable: tls
-                label: TLS-Settings
-                schema:
-                  type: list
-                  default: []
-                  items:
-                    - variable: tlsEntry
-                      label: Host
-                      schema:
-                        additional_attrs: true
-                        type: dict
-                        attrs:
-                          - variable: hosts
-                            label: Certificate Hosts
-                            schema:
-                              type: list
-                              default: []
-                              items:
-                                - variable: host
-                                  label: Host
-                                  schema:
-                                    type: string
-                                    default: ""
-                                    required: true
-                          - variable: scaleCert
-                            label: Select TrueNAS SCALE Certificate
-                            schema:
-                              type: int
-                              $ref:
-                                - "definitions/certificate"
-              - variable: entrypoint
-                label: Traefik Entrypoint
-                description: Entrypoint used by Traefik when using Traefik as Ingress Provider
-                schema:
-                  type: string
-                  default: websecure
-                  required: true
-              - variable: middlewares
-                label: Traefik Middlewares
-                description: Add previously created Traefik Middlewares to this Ingress
-                schema:
-                  type: list
-                  default: []
-                  items:
-                    - variable: name
-                      label: Name
-                      schema:
-                        type: string
-                        default: ""
-                        required: true
+
+
   - variable: security
     label: Container Security Settings
     group: Security and Permissions
@@ -1874,32 +1481,7 @@ questions:
                 schema:
                   type: boolean
                   default: true
-              - variable: capabilities
-                label: Capabilities
-                schema:
-                  additional_attrs: true
-                  type: dict
-                  attrs:
-                    - variable: drop
-                      label: Drop Capability
-                      schema:
-                        type: list
-                        default: []
-                        items:
-                          - variable: dropEntry
-                            label: ""
-                            schema:
-                              type: string
-                    - variable: add
-                      label: Add Capability
-                      schema:
-                        type: list
-                        default: []
-                        items:
-                          - variable: addEntry
-                            label: ""
-                            schema:
-                              type: string
+
   - variable: podSecurityContext
     group: Security and Permissions
     label: Pod Security Context
@@ -1945,61 +1527,56 @@ questions:
                 label: Supplemental Group
                 schema:
                   type: int
-
-  - variable: advancedresources
-    label: Set Custom Resource Limits/Requests (Advanced)
+  - variable: resources
     group: Resources and Devices
+    label: "Resource Limits"
     schema:
-      type: boolean
-      default: false
-      show_subquestions_if: true
-      subquestions:
-        - variable: resources
-          label: ""
+      additional_attrs: true
+      type: dict
+      attrs:
+        - variable: limits
+          label: Advanced Limit Resource Consumption
           schema:
             additional_attrs: true
             type: dict
             attrs:
-              - variable: limits
-                label: Advanced Limit Resource Consumption
+              - variable: cpu
+                label: CPU
+                description: "1000m means 1 hyperthread. Detailed info: https://truecharts.org/docs/manual/SCALE%20Apps/indepth/validation"
                 schema:
-                  additional_attrs: true
-                  type: dict
-                  attrs:
-                    - variable: cpu
-                      label: CPU
-                      description: "1000m means 1 hyperthread. Detailed info: https://truecharts.org/docs/manual/SCALE%20Apps/indepth/validation"
-                      schema:
-                        type: string
-                        default: 4000m
-                        valid_chars: '^(?!^0(\.0|m|)$)([0-9]+)(\.[0-9]|m?)$'
-                    - variable: memory
-                      label: RAM
-                      description: "1Gi means 1 Gibibyte RAM. Detailed info: https://truecharts.org/docs/manual/SCALE%20Apps/indepth/validation"
-                      schema:
-                        type: string
-                        default: 8Gi
-                        valid_chars: '^(?!^0(e[0-9]|[EPTGMK]i?|)$)([0-9]+)(|[EPTGMK]i?|e[0-9]+)$'
-              - variable: requests
-                label: "Minimum Resources Required (request)"
+                  type: string
+                  default: 4000m
+                  valid_chars: '^(?!^0(\.0|m|)$)([0-9]+)(\.[0-9]|m?)$'
+              - variable: memory
+                label: RAM
+                description: "1Gi means 1 Gibibyte RAM. Detailed info: https://truecharts.org/docs/manual/SCALE%20Apps/indepth/validation"
                 schema:
-                  additional_attrs: true
-                  type: dict
-                  attrs:
-                    - variable: cpu
-                      label: CPU
-                      description: "1000m means 1 hyperthread. Detailed info: https://truecharts.org/docs/manual/SCALE%20Apps/indepth/validation"
-                      schema:
-                        type: string
-                        default: 10m
-                        valid_chars: '^(?!^0(\.0|m|)$)([0-9]+)(\.[0-9]|m?)$'
-                    - variable: memory
-                      label: "RAM"
-                      description: "1Gi means 1 Gibibyte RAM. Detailed info: https://truecharts.org/docs/manual/SCALE%20Apps/indepth/validation"
-                      schema:
-                        type: string
-                        default: 50Mi
-                        valid_chars: '^(?!^0(e[0-9]|[EPTGMK]i?|)$)([0-9]+)(|[EPTGMK]i?|e[0-9]+)$'
+                  type: string
+                  default: 8Gi
+                  valid_chars: '^(?!^0(e[0-9]|[EPTGMK]i?|)$)([0-9]+)(|[EPTGMK]i?|e[0-9]+)$'
+        - variable: requests
+          label: "Minimum Resources Required (request)"
+          schema:
+            additional_attrs: true
+            type: dict
+            hidden: true
+            attrs:
+              - variable: cpu
+                label: CPU
+                description: "1000m means 1 hyperthread. Detailed info: https://truecharts.org/docs/manual/SCALE%20Apps/indepth/validation"
+                schema:
+                  type: string
+                  default: 10m
+                  hidden: true
+                  valid_chars: '^(?!^0(\.0|m|)$)([0-9]+)(\.[0-9]|m?)$'
+              - variable: memory
+                label: "RAM"
+                description: "1Gi means 1 Gibibyte RAM. Detailed info: https://truecharts.org/docs/manual/SCALE%20Apps/indepth/validation"
+                schema:
+                  type: string
+                  default: 50Mi
+                  hidden: true
+                  valid_chars: '^(?!^0(e[0-9]|[EPTGMK]i?|)$)([0-9]+)(|[EPTGMK]i?|e[0-9]+)$'
   - variable: deviceList
     label: Mount USB Devices
     group: Resources and Devices
@@ -2630,111 +2207,8 @@ questions:
                                   schema:
                                     type: string
                                     required: true
-        - variable: promtail
-          label: Promtail
-          schema:
-            additional_attrs: true
-            type: dict
-            attrs:
-              - variable: enabled
-                label: Enabled
-                schema:
-                  type: boolean
-                  default: false
-                  show_subquestions_if: true
-                  subquestions:
-                    - variable: loki
-                      label: Loki URL
-                      schema:
-                        type: string
-                        required: true
-                    - variable: logs
-                      label: Log Paths
-                      schema:
-                        additional_attrs: true
-                        type: dict
-                        attrs:
-                          - variable: name
-                            label: Name
-                            schema:
-                              type: string
-                              required: true
-                          - variable: path
-                            label: Path
-                            schema:
-                              type: string
-                              required: true
-                    - variable: args
-                      label: Promtail Command Line Arguments
-                      schema:
-                        type: list
-                        show_if: [["type", "!=", "disabled"]]
-                        default: []
-                        items:
-                          - variable: arg
-                            label: Arg
-                            schema:
-                              type: string
-                              required: true
-                    - variable: envList
-                      label: Promtail Environment Variables
-                      schema:
-                        type: list
-                        show_if: [["type", "!=", "disabled"]]
-                        default: []
-                        items:
-                          - variable: envItem
-                            label: Environment Variable
-                            schema:
-                              additional_attrs: true
-                              type: dict
-                              attrs:
-                                - variable: name
-                                  label: Name
-                                  schema:
-                                    type: string
-                                    required: true
-                                - variable: value
-                                  label: Value
-                                  schema:
-                                    type: string
-                                    required: true
-        - variable: netshoot
-          label: Netshoot
-          schema:
-            additional_attrs: true
-            type: dict
-            attrs:
-              - variable: enabled
-                label: Enabled
-                schema:
-                  type: boolean
-                  default: false
-                  show_subquestions_if: true
-                  subquestions:
-                    - variable: envList
-                      label: Netshoot Environment Variables
-                      schema:
-                        type: list
-                        show_if: [["type", "!=", "disabled"]]
-                        default: []
-                        items:
-                          - variable: envItem
-                            label: Environment Variable
-                            schema:
-                              additional_attrs: true
-                              type: dict
-                              attrs:
-                                - variable: name
-                                  label: Name
-                                  schema:
-                                    type: string
-                                    required: true
-                                - variable: value
-                                  label: Value
-                                  schema:
-                                    type: string
-                                    required: true
+
+
         - variable: vpn
           label: VPN
           schema:
