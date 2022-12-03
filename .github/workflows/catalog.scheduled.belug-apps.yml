@@ -1,0 +1,18 @@
+---
+name: '[Scheduled] Catalog (Sync Belug-Apps chart)'
+on: # yamllint disable-line rule:truthy
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 0 * * *'
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  sync_belugapps:
+    uses: ./.github/workflows/catalog.update.belug-apps.yml
+    secrets: inherit
+    with:
+      ref: main
+      train: incubator
