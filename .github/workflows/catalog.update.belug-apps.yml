@@ -4,7 +4,7 @@ on: # yamllint disable-line rule:truthy
   workflow_dispatch:
     inputs:
       ref:
-        description: `belug-apps/belug-apps` ref to synchronize with
+        description: "`belug-apps/belug-apps` ref to synchronize with"
         required: true
         default: main
         type: string
@@ -15,7 +15,7 @@ on: # yamllint disable-line rule:truthy
   workflow_call:
     inputs:
       ref:
-        description: `belug-apps/belug-apps` ref to synchronize with
+        description: "`belug-apps/belug-apps` ref to synchronize with"
         required: true
         type: string
       train:
@@ -59,15 +59,15 @@ jobs:
       - uses: peter-evans/create-pull-request@331d02c7e2104af23ad5974d4d5cbc58a3e6dc77 # v4.2.2
         id: create-pr
         with:
-          commit-message: sync belug-apps chart with ${{ inputs.train }} (${{ steps.helm.outputs.version }})
-          author: Belug Apps <116495032+belug-apps[bot]@users.noreply.github.com>
-          committer: Belug Apps <116495032+belug-apps[bot]@users.noreply.github.com>
+          commit-message: sync Belug-Apps chart with ${{ inputs.train }} (${{ steps.helm.outputs.version }})
+          author: belug-apps[bot] <116495032+belug-apps[bot]@users.noreply.github.com>
+          committer: belug-apps[bot] <116495032+belug-apps[bot]@users.noreply.github.com>
           base: main
           body: ''
           branch: catalog/sync-${{ inputs.train }}-${{ inputs.ref }}
           delete-branch: true
           signoff: true
-          title: Sync catalog (${{ inputs.train }}) with belug-apps chart (${{ steps.helm.outputs.version }})
+          title: Sync catalog (${{ inputs.train }}) with Belug-Apps chart (${{ steps.helm.outputs.version }})
 
       - uses: peter-evans/enable-pull-request-automerge@127dd0d855f673047637945655ee76f0e9f239fe # tag=v2.2.1
         if: steps.create-pr.outputs.pull-request-operation == 'created'
