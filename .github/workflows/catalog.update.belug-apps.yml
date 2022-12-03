@@ -1,10 +1,10 @@
 ---
-name: Catalog (Update belug-apps chart)
+name: Catalog (Update Belug-Apps chart)
 on: # yamllint disable-line rule:truthy
   workflow_dispatch:
     inputs:
-      branch:
-        description: belug-apps/belug-apps branch to synchronize with
+      ref:
+        description: `belug-apps/belug-apps` ref to synchronize with
         required: true
         default: main
         type: string
@@ -14,8 +14,8 @@ on: # yamllint disable-line rule:truthy
         type: environment
   workflow_call:
     inputs:
-      branch:
-        description: belug-apps/belug-apps branch to synchronize with
+      ref:
+        description: `belug-apps/belug-apps` ref to synchronize with
         required: true
         type: string
       train:
@@ -36,22 +36,26 @@ jobs:
         with:
           app_id: ${{ secrets.BOT_ID }}
           private_key: ${{ secrets.BOT_PKEY }}
+
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
         with:
           ref: main
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
         with:
           repository: belug-apps/belug-apps
-          ref: ${{ inputs.branch }}
+          ref: ${{ inputs.ref }}
           path: vendors/belug-apps
-      - name: Find latest belug-apps version
+
+      - name: Find latest Belug-Apps version
         id: helm
         run: echo >> "$GITHUB_OUTPUT" "version=$(grep '^version:' vendors/belug-apps/charts/belug-apps/Chart.yaml | awk '{print $2}')"
-      - name: Sync latest belug-apps version (${{ steps.helm.outputs.version }})
+
+      - name: Sync latest Belug-Apps version (${{ steps.helm.outputs.version }})
         run: |
           mkdir --parent ${{ inputs.train }}/belug-apps
           rsync --archive --recursive --delete --verbose vendors/belug-apps/charts/belug-apps/ ${{ inputs.train }}/belug-apps/${{ steps.helm.outputs.version }}
           rm --recursive vendors/
+
       - uses: peter-evans/create-pull-request@331d02c7e2104af23ad5974d4d5cbc58a3e6dc77 # v4.2.2
         id: create-pr
         with:
@@ -60,10 +64,11 @@ jobs:
           committer: Belug Apps <116495032+belug-apps[bot]@users.noreply.github.com>
           base: main
           body: ''
-          branch: catalog/sync-${{ inputs.train }}-${{ inputs.branch }}
+          branch: catalog/sync-${{ inputs.train }}-${{ inputs.ref }}
           delete-branch: true
           signoff: true
           title: Sync catalog (${{ inputs.train }}) with belug-apps chart (${{ steps.helm.outputs.version }})
+
       - uses: peter-evans/enable-pull-request-automerge@127dd0d855f673047637945655ee76f0e9f239fe # tag=v2.2.1
         if: steps.create-pr.outputs.pull-request-operation == 'created'
         with:
