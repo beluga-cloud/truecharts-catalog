@@ -75,7 +75,7 @@ jobs:
           merge-method: squash
           pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
           token: ${{ steps.app_auth.outputs.token }}
-      - uses: hmarr/auto-approve-action@de8ae18c173c131e182d4adf2c874d8d2308a85b # tag=v3.1.0
+      - uses: hmarr/auto-approve-action@44888193675f29a83e04faf4002fa8c0b537b1e4 # v3.2.1
         if: steps.create-pr.outputs.pull-request-operation == 'created'
         with:
           pull-request-number: ${{ steps.create-pr.outputs.pull-request-number }}
